@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>B-Tree</title>
+	<meta charset="utf-8"/>
+	<script>
+		function draw(levels) {
+			var c = document.getElementById("btree");
+			var w = c.width;
+			var h = c.height;
+			var ctx = c.getContext("2d");
+
+			var repeat_delay = 5000;
+			var level_delay = 500;
+			var leaf_delay = 100;
+
+			ctx.clearRect(0, 0, w, h);
+
+			var ms = 1000;
+			for (level = 0; level < levels; level++) {
+				for (leaf = 1; leaf < Math.pow(2, level) + 1; leaf++) {
+					setTimeout(function (level, leaf) {
+						ctx.beginPath();
+						ctx.moveTo(level * w / levels, h / (Math.pow(2, level) + 1) * leaf);
+						ctx.lineTo((level + 1) * w / levels,
+						            h / (Math.pow(2, level + 1) + 1) * (leaf * 2 - 1));
+						ctx.stroke();
+						console.log(level, levels, leaf);
+					},
+					ms, level, leaf);
+
+					ms = ms + leaf_delay;
+
+					setTimeout(function (level, leaf) {
+						ctx.beginPath();
+						ctx.moveTo(level * w / levels, h / (Math.pow(2, level) + 1) * leaf);
+						ctx.lineTo((level + 1) * w / levels,
+					               h / (Math.pow(2, level + 1) + 1) * (leaf * 2));
+						ctx.stroke();
+						console.log(level, levels, leaf);
+					},
+					ms, level, leaf);
+
+					ms = ms + leaf_delay;
+
+				}
+				ms = ms + level_delay;
+			}
+
+			if (repeat_delay > 0) {
+				setTimeout(draw, ms + repeat_delay, levels);
+			}
+
+
+		}
+	</script>
+</head>
+
+<body onload="draw(5)">
+	<canvas id="btree" width="400" height="500"></canvas>
+</body>
+</html>
