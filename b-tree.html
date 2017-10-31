@@ -16,8 +16,68 @@
 			var level_delay = 500;
 			var leaf_delay = 100;
 
+			var margins = 10;
+
 			ctx.clearRect(0, 0, w, h);
 
+			slope = ((h - margins * 2) / 2) / (w - margins * 2);
+
+			var dist = [];
+			
+			dist[0] = (w - margins * 2) / h_frac;
+			ctx.beginPath();
+			ctx.moveTo(margins, h / 2);
+			ctx.lineTo(margins + dist[0], h / 2 - slope * dist[0]);
+			ctx.moveTo(margins, h / 2);
+			ctx.lineTo(margins + dist[0], h / 2 + slope * dist[0]);
+			ctx.stroke();
+
+
+			dist[1] = (w - dist[0] - margins * 2) / h_frac;
+			ctx.beginPath();
+			ctx.moveTo(margins + dist[0], h / 2 - slope * dist[0]);
+			ctx.lineTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] + dist[0]));
+			ctx.moveTo(margins + dist[0], h / 2 - slope * dist[0]);
+			ctx.lineTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] - dist[0]));
+
+			ctx.moveTo(margins + dist[0], h / 2 + slope * dist[0]);
+			ctx.lineTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] - dist[0]));
+			ctx.moveTo(margins + dist[0], h / 2 + slope * dist[0]);
+			ctx.lineTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] + dist[0]));
+			ctx.stroke();
+
+
+			dist[2] = (w - dist[1] - dist[0] - margins * 2) / h_frac;
+			ctx.beginPath();
+			ctx.moveTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] + dist[0]));
+			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 - slope * (dist[2] + dist[1] + dist[0]));
+
+			ctx.moveTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] + dist[0]));
+			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 + slope * (dist[2] - dist[1] - dist[0]));
+
+
+			ctx.moveTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] - dist[0]));
+			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 - slope * (dist[2] - dist[1] + dist[0]));
+			ctx.moveTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] - dist[0]));
+			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 + slope * (dist[2] + dist[1] - dist[0]));
+
+
+			ctx.moveTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] - dist[0]));
+			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 - slope * (dist[2] + dist[1] - dist[0]));
+			ctx.moveTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] - dist[0]));
+			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 + slope * (dist[2] - dist[1] + dist[0]));
+
+
+			ctx.moveTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] + dist[0]));
+			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 - slope * (dist[2] - dist[1] - dist[0]));
+			ctx.moveTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] + dist[0]));
+			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 + slope * (dist[2] + dist[1] + dist[0]));
+			ctx.stroke();
+
+
+
+
+/*
 			var ms = 1000;
 			for (level = 0; level < levels; level++) {
 				for (leaf = 1; leaf < Math.pow(2, level) + 1; leaf++) {
@@ -54,13 +114,13 @@
 			if (repeat_delay > 0) {
 				setTimeout(draw, ms + repeat_delay, levels);
 			}
-
+*/
 
 		}
 	</script>
 </head>
 
 <body onload="draw(5)">
-	<canvas id="btree" width="400" height="500"></canvas>
+	<canvas id="btree" width="400" height="500" style="border:1px solid #000000;"></canvas>
 </body>
 </html>
