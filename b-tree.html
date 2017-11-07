@@ -4,123 +4,64 @@
 	<title>B-Tree</title>
 	<meta charset="utf-8"/>
 	<script>
+
+
 		function draw(levels) {
 			var c = document.getElementById("btree");
 			var w = c.width;
 			var h = c.height;
 			var ctx = c.getContext("2d");
 
-			var h_frac = 2;
-
-			var repeat_delay = 5000;
+			var repeat_delay = 3000;
+			var teardown_delay = 1000;
 			var level_delay = 500;
-			var leaf_delay = 100;
 
 			var margins = 10;
 
-			ctx.clearRect(0, 0, w, h);
-
-			slope = ((h - margins * 2) / 2) / (w - margins * 2);
-
-			var dist = [];
+			// If h_frac is changed, slope will need to be adjusted to
+			// prevent overlap.  I might fix this in the future.
+			var h_frac = 2;
+			var slope = ((h - margins * 2) / 2) / (w - margins * 2);
 			
-			dist[0] = (w - margins * 2) / h_frac;
-			ctx.beginPath();
-			ctx.moveTo(margins, h / 2);
-			ctx.lineTo(margins + dist[0], h / 2 - slope * dist[0]);
-			ctx.moveTo(margins, h / 2);
-			ctx.lineTo(margins + dist[0], h / 2 + slope * dist[0]);
-			ctx.stroke();
-
-
-			dist[1] = (w - dist[0] - margins * 2) / h_frac;
-			ctx.beginPath();
-			ctx.moveTo(margins + dist[0], h / 2 - slope * dist[0]);
-			ctx.lineTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] + dist[0]));
-			ctx.moveTo(margins + dist[0], h / 2 - slope * dist[0]);
-			ctx.lineTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] - dist[0]));
-
-			ctx.moveTo(margins + dist[0], h / 2 + slope * dist[0]);
-			ctx.lineTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] - dist[0]));
-			ctx.moveTo(margins + dist[0], h / 2 + slope * dist[0]);
-			ctx.lineTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] + dist[0]));
-			ctx.stroke();
-
-
-			dist[2] = (w - dist[1] - dist[0] - margins * 2) / h_frac;
-			ctx.beginPath();
-			ctx.moveTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] + dist[0]));
-			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 - slope * (dist[2] + dist[1] + dist[0]));
-
-			ctx.moveTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] + dist[0]));
-			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 + slope * (dist[2] - dist[1] - dist[0]));
-
-
-			ctx.moveTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] - dist[0]));
-			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 - slope * (dist[2] - dist[1] + dist[0]));
-			ctx.moveTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] - dist[0]));
-			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 + slope * (dist[2] + dist[1] - dist[0]));
-
-
-			ctx.moveTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] - dist[0]));
-			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 - slope * (dist[2] + dist[1] - dist[0]));
-			ctx.moveTo(margins + dist[1] + dist[0], h / 2 - slope * (dist[1] - dist[0]));
-			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 + slope * (dist[2] - dist[1] + dist[0]));
-
-
-			ctx.moveTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] + dist[0]));
-			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 - slope * (dist[2] - dist[1] - dist[0]));
-			ctx.moveTo(margins + dist[1] + dist[0], h / 2 + slope * (dist[1] + dist[0]));
-			ctx.lineTo(margins + dist[2] + dist[1] + dist[0], h / 2 + slope * (dist[2] + dist[1] + dist[0]));
-			ctx.stroke();
-
-
-
-
-/*
-			var ms = 1000;
-			for (level = 0; level < levels; level++) {
-				for (leaf = 1; leaf < Math.pow(2, level) + 1; leaf++) {
-					setTimeout(function (level, leaf) {
-						ctx.beginPath();
-						ctx.moveTo(w - (w / Math.pow(h_frac, level)),
-						           h / (Math.pow(2, level) + 1) * leaf);
-						ctx.lineTo(w - (w / Math.pow(h_frac, level + 1)),
-						           h / (Math.pow(2, level + 1) + 1) * (leaf * 2 - 1));
-						ctx.stroke();
-						console.log(level, levels, leaf);
-					},
-					ms, level, leaf);
-
-					ms = ms + leaf_delay;
-
-					setTimeout(function (level, leaf) {
-						ctx.beginPath();
-						ctx.moveTo(w - (w / Math.pow(h_frac, level)),
-						           h / (Math.pow(2, level) + 1) * leaf);
-						ctx.lineTo(w - (w / Math.pow(h_frac, level + 1)),
-					               h / (Math.pow(2, level + 1) + 1) * (leaf * 2));
-						ctx.stroke();
-						console.log(level, levels, leaf);
-					},
-					ms, level, leaf);
-
-					ms = ms + leaf_delay;
-
+			ctx.clearRect(0, 0, w, h);
+	
+			// This goes in here so that above variables will be in scope
+			function lines(dist, loc, depth, delay=0) {
+				function render_lines(dist, loc) {
+					ctx.beginPath();
+					ctx.moveTo(loc[0], loc[1]);
+					ctx.lineTo(loc[0] + dist, loc[1] + slope * -dist);
+					ctx.moveTo(loc[0], loc[1]);
+					ctx.lineTo(loc[0] + dist, loc[1] + slope * dist);
+					ctx.stroke();
 				}
-				ms = ms + level_delay;
+
+				setTimeout(render_lines, delay, dist, loc);
+				setTimeout(function (x) {ctx.clearRect(x, 0, w, h)},
+				           level_delay * levels * 2 + teardown_delay - delay,
+				           loc[0]);
+
+				depth--;
+				if (depth) {
+					lines((dist / h_frac) * (h_frac - 1),
+					      [loc[0] + dist, loc[1] + slope * -dist],
+					      depth,
+					      delay + level_delay);
+					lines((dist / h_frac) * (h_frac - 1),
+					      [loc[0] + dist, loc[1] + slope *  dist],
+					      depth,
+					      delay + level_delay);
+				}
 			}
 
-			if (repeat_delay > 0) {
-				setTimeout(draw, ms + repeat_delay, levels);
-			}
-*/
+			lines((w - margins * 2) / h_frac, [margins, h/2], levels);
 
+			setTimeout(draw, repeat_delay + teardown_delay + levels * level_delay * 2, levels);
 		}
 	</script>
 </head>
 
-<body onload="draw(5)">
+<body onload="draw(6)">
 	<canvas id="btree" width="400" height="500" style="border:1px solid #000000;"></canvas>
 </body>
 </html>
